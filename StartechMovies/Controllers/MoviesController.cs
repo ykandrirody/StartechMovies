@@ -15,26 +15,29 @@ namespace StartechMovies.Controllers
     [RoutePrefix("films")] 
     public class MoviesController : Controller
     {
+        private static IMovieRepository repository;
+
         // GET: Movies
         //DEMO-ROUTAGE
         [Route("")] 
         public ActionResult Index()
         {
             InitMovies();
-            return View(movies);
+            return View(repository.Get());
         }
 
         // GET: Movies/Details/5
         //DEMO-ROUTAGE
         [Route("{id}")]
-        public ActionResult Details(string id)
+        public ActionResult Details(int id)
         {
             InitMovies();
-            if (id == null)
+            if (id <= 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movieModel = movies.Find(m => m.imdbID.Equals(id));
+            Movie movieModel;
+            repository.TryGet(id, out movieModel);
             if (movieModel == null)
             {
                 return HttpNotFound();
@@ -59,7 +62,8 @@ namespace StartechMovies.Controllers
             InitMovies();
             if (ModelState.IsValid)
             {
-                movies.Add(movieModel);
+                
+                repository.Add(movieModel);
                 return RedirectToAction("Index");
             }
 
@@ -67,14 +71,15 @@ namespace StartechMovies.Controllers
         }
 
         // GET: Movies/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(int id)
         {
             InitMovies();
-            if (id == null)
+            if (id <= 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movieModel = movies.Find(m => m.imdbID.Equals(id));
+            Movie movieModel;
+            repository.TryGet(id, out movieModel);
             if (movieModel == null)
             {
                 return HttpNotFound();
@@ -87,30 +92,30 @@ namespace StartechMovies.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "imdbID,Title,Year,Rated,Released,Runtime,Genre,Director,Writer,Actors,Plot,Language,Country,Awards,Poster,Metascore,imdbRating,imdbVotes,Type")] Movie movieModel)
+        public ActionResult Edit([Bind(Include = "ID,imdbID,Title,Year,Rated,Released,Runtime,Genre,Director,Writer,Actors,Plot,Language,Country,Awards,Poster,Metascore,imdbRating,imdbVotes,Type")] Movie movieModel)
         {
             InitMovies();
             if (ModelState.IsValid)
             {
-                Movie movieToDelete = movies.Find(m => m.imdbID.Equals(movieModel.imdbID));
-                int index = movies.IndexOf(movieToDelete);
-                movies.Remove(movieToDelete);
-                movies.Insert(index, movieModel);
+                repository.Update(movieModel);
+
                 return RedirectToAction("Index");
             }
             return View(movieModel);
         }
 
         // GET: Movies/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(int id)
         {
             InitMovies();
-            if (id == null)
+            if (id <=0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Movie movieModel = movies.Find(m => m.imdbID.Equals(id));
-            if (movieModel == null)
+            Movie movieModel;
+            repository.TryGet(id, out movieModel);
+            bool result = repository.Delete(id);
+            if (!result)
             {
                 return HttpNotFound();
             }
@@ -120,22 +125,18 @@ namespace StartechMovies.Controllers
         // POST: Movies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(int id)
         {
             InitMovies();
-            Movie movieModel = movies.Find(m => m.imdbID.Equals(id));
-            movies.Remove(movieModel);
+            bool result = repository.Delete(id);
             return RedirectToAction("Index");
         }
 
-
-        private static List<Movie> movies = null;
-
         private void InitMovies()
         {
-            if (movies == null)
+            if (repository == null)
             {
-                movies = MoviesHelper.InitMovies();
+                repository = MoviesHelper.InitMovies();
             }
         }
 

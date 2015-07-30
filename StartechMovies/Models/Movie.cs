@@ -5,8 +5,9 @@ namespace StartechMovies.Models
     public class Movie
     {
         [Key]
-        public string imdbID { get; set; }
+        public int ID { get; set; }
 
+        public string imdbID { get; set; }
         public string Title { get; set; }
         public string Year { get; set; }
         public string Rated { get; set; }

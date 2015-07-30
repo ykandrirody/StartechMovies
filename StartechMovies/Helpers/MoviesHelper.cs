@@ -10,13 +10,16 @@ namespace StartechMovies.Helpers
 {
     public class MoviesHelper
     {
-        public static List<Movie> InitMovies()
+        public static DictionaryMovieRepository InitMovies()
         {
             ///http://www.omdbapi.com/?t=fast+furious&y=2015&plot=full&r=json&type=movie&
             
             String moviesContent = File.ReadAllText(HttpContext.Current.Server.MapPath(@"~\App_Data\movies.json"));
             var movies = JsonConvert.DeserializeObject<Movie[]>(moviesContent);
-            return movies.ToList();
+
+            Dictionary<int, Movie> moviesDico = movies.ToDictionary(m => m.ID);
+            var repo = new DictionaryMovieRepository(moviesDico);
+            return repo;
         }
 
     }

@@ -167,7 +167,9 @@
     </Compile>
     <Compile Include="Helpers\MoviesHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DictionaryMovieRepository.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IMovieRepository.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Movie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -230,6 +232,11 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\MoviesOld\Create.cshtml" />
+    <Content Include="Views\MoviesOld\Delete.cshtml" />
+    <Content Include="Views\MoviesOld\Details.cshtml" />
+    <Content Include="Views\MoviesOld\Edit.cshtml" />
+    <Content Include="Views\MoviesOld\Index.cshtml" />
     <Content Include="Views\Movies\Create.cshtml" />
     <Content Include="Views\Movies\Delete.cshtml" />
     <Content Include="Views\Movies\Details.cshtml" />
